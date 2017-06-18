@@ -28,7 +28,7 @@ func RunUdpClient() {
 	} else  {
 		user = strings.TrimRight(u, "\n")
 	}
-	serverAddr, err := net.ResolveUDPAddr("udp", "98.219.50.60:37701")
+	serverAddr, err := net.ResolveUDPAddr("udp", "99.141.152.69:37701")
 	if err != nil {
 		fmt.Fprintf(os.Stderr,"[Client] Error while getting UDP Address: %+v\n", err)
 		os.Exit(-1)
