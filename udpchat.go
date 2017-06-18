@@ -12,14 +12,14 @@ import (
 )
 
 func main() {
-	go StartUdpServer()
-	time.Sleep(1*time.Second)
+	//go StartUdpServer()
+	//time.Sleep(1*time.Second)
 	RunUdpClient()
 }
 
 func RunUdpClient() {
 	user := "fire00f1y"
-	serverAddr, err := net.ResolveUDPAddr("udp", "192.168.1.68:37701")
+	serverAddr, err := net.ResolveUDPAddr("udp", "99.141.152.69:37701")
 	if err != nil {
 		fmt.Fprintf(os.Stderr,"[Client] Error while getting UDP Address: %+v\n", err)
 		os.Exit(-1)
@@ -39,7 +39,8 @@ func RunUdpClient() {
 	port := conn.LocalAddr().String()[index+1:]
 	defer conn.Close()
 
-	fmt.Println("======= Start chatting:")
+	fmt.Println("Chat started. Type \"exit()\" to quit the application:")
+	fmt.Println("====================================")
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		packet := message.Packet{}
