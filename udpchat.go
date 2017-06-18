@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"os"
-	"github.com/fire00f1y/learning/message"
+	"github.com/fire00f1y/udpchat/message"
 	"strings"
 	"bufio"
 	"time"
@@ -56,7 +56,11 @@ func RunUdpClient() {
 			fmt.Fprintf(os.Stderr, "Error reading commandline input: %+v\n", err)
 			continue
 		} else {
+			if s[len(s)-1] == '\n' {
+				s = s[:len(s)-1]
+			}
 			if s == "exit()" {
+				fmt.Println("Exiting application...")
 				os.Exit(0)
 			}
 			packet.Message = s
@@ -70,7 +74,7 @@ func RunUdpClient() {
 		if errs != nil {
 			fmt.Fprintf(os.Stderr,"[Client] Error while writing: %+v\n", errs)
 		}
-		time.Sleep(1*time.Second)
+		time.Sleep(500*time.Millisecond)
 	}
 }
 
@@ -97,7 +101,7 @@ func StartUdpServer() {
 			fmt.Fprintf(os.Stderr,"[Server] Error while reading UDP buffer: %+v\n", err)
 		} else {
 			packet := message.New(buffer[0:n])
-			fmt.Printf("Message from %s:\n%sOn port %d\n", addr.String(), packet.Print(), packet.Port)
+			fmt.Printf("Message from %s:\n%s\n", addr.String(), packet.Print())
 		}
 	}
 }

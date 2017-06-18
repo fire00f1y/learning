@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	"github.com/fire00f1y/learning/utils"
+	"github.com/fire00f1y/udpchat/utils"
 	"time"
 	"strings"
 )
