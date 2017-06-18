@@ -9,29 +9,24 @@ import (
 )
 
 func main() {
-	go StartUdpServer()
-	RunUdpClient()
+	StartUdpServer()
+	//RunUdpClient()
 }
 
 func RunUdpClient() {
 	user := "Client"
 	serverAddr, err := net.ResolveUDPAddr("udp", "192.168.1.68:37701")
 	if err != nil {
-		fmt.Printf("[%s] Error while getting UDP Address: %+v\n", user, err)
+		fmt.Fprintf(os.Stderr,"[%s] Error while getting UDP Address: %+v\n", user, err)
+		os.Exit(-1)
 	} else {
 		fmt.Printf("Successfully resolved server address: %q\n", serverAddr)
 	}
 
-	localAddr, err := net.ResolveUDPAddr("udp", "127.0.0.1:0")
+	conn, err := net.DialUDP("udp", nil, serverAddr)
 	if err != nil {
-		fmt.Printf("[%s] Error while getting local UDP Address: %+v\n", user, err)
-	} else {
-		fmt.Printf("Successfull resolved local address: %q\n", localAddr)
-	}
-
-	conn, err := net.DialUDP("udp", localAddr, serverAddr)
-	if err != nil {
-		fmt.Printf("[%s] Error while dialing server: %+v\n", user, err)
+		fmt.Fprintf(os.Stderr,"[%s] Error while dialing server: %+v\n", user, err)
+		os.Exit(-3)
 	} else {
 		fmt.Printf("Successfully dialed connection to server. Connection: [remote: %q, local: %q]\n", conn.RemoteAddr(), conn.LocalAddr())
 	}
@@ -52,15 +47,15 @@ func RunUdpClient() {
 }
 
 func StartUdpServer() {
-	serverAddr, err := net.ResolveUDPAddr("udp", "192.168.1.68:37701")
+	serverAddr, err := net.ResolveUDPAddr("udp", ":37701")
 	if err != nil {
-		fmt.Printf("Error while getting UDP Address: %+v\n", err)
+		fmt.Fprintf(os.Stderr,"Error while getting UDP Address: %+v\n", err)
 	} else {
 		fmt.Printf("Successfully resolved server address: %q\n", serverAddr)
 	}
 	conn, err := net.ListenUDP("udp", serverAddr)
 	if err != nil {
-		fmt.Printf("Error while listening at UDP Address %q: %+v\n", serverAddr, err)
+		fmt.Fprintf(os.Stderr,"Error while listening at UDP Address %q: %+v\n", serverAddr, err)
 	} else {
 		fmt.Printf("Successfully started listening at address: %q\n", serverAddr)
 	}
@@ -71,7 +66,7 @@ func StartUdpServer() {
 		fmt.Println("Awaiting packets...")
 		n, addr, err := conn.ReadFromUDP(buffer)
 		if err != nil {
-			fmt.Printf("Error while reading UDP buffer: %+v\n", err)
+			fmt.Fprintf(os.Stderr,"Error while reading UDP buffer: %+v\n", err)
 		} else {
 			fmt.Printf("[%s] %s\n", addr.IP.String(), string(buffer[0:n]))
 		}
