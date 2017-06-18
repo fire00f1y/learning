@@ -12,13 +12,22 @@ import (
 )
 
 func main() {
-	//go StartUdpServer()
-	//time.Sleep(1*time.Second)
+	go StartUdpServer()
+	time.Sleep(1*time.Second)
 	RunUdpClient()
 }
 
 func RunUdpClient() {
-	user := "fire00f1y"
+	var user string
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter your username: ")
+	u, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Shit went wrong: %+v\n", err)
+		user = "Unknown user"
+	} else  {
+		user = strings.TrimRight(u, "\n")
+	}
 	serverAddr, err := net.ResolveUDPAddr("udp", "99.141.152.69:37701")
 	if err != nil {
 		fmt.Fprintf(os.Stderr,"[Client] Error while getting UDP Address: %+v\n", err)
@@ -41,7 +50,6 @@ func RunUdpClient() {
 
 	fmt.Println("Chat started. Type \"exit()\" to quit the application:")
 	fmt.Println("====================================")
-	reader := bufio.NewReader(os.Stdin)
 	for {
 		packet := message.Packet{}
 		packet.User = user
@@ -51,15 +59,13 @@ func RunUdpClient() {
 		} else {
 			packet.Port = uint16(i)
 		}
-		fmt.Print("$ ")
+		fmt.Printf("[%s] $ ", user)
 		s, err := reader.ReadString('\n')
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error reading commandline input: %+v\n", err)
 			continue
 		} else {
-			if s[len(s)-1] == '\n' {
-				s = s[:len(s)-1]
-			}
+			s = strings.TrimRight(s, "\n")
 			if s == "exit()" {
 				fmt.Println("Exiting application...")
 				os.Exit(0)
